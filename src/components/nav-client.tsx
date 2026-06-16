@@ -36,7 +36,7 @@ export default function NavClient({ user }: { user: User }) {
   return (
     <div className="flex items-center gap-3">
       {user ? (
-        <div className="relative" ref={menuRef}>
+        <div className="relative hidden md:block" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="text-white/80 hover:text-white text-sm transition"
@@ -44,7 +44,7 @@ export default function NavClient({ user }: { user: User }) {
             Bienvenue, {user.name.split(" ")[0]} ▾
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-8 bg-black/90 border border-white/10 rounded-lg w-44 py-2 z-50 backdrop-blur-md">
+            <div className="absolute right-0 top-8 bg-black/90 border border-white/10 rounded-lg w-48 py-2 z-50 backdrop-blur-md">
               <Link href="/profil" className="block px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 transition" onClick={() => setMenuOpen(false)}>Mon profil</Link>
               <Link href="/reservations" className="block px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 transition" onClick={() => setMenuOpen(false)}>Mes réservations</Link>
               <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-white/80 hover:text-white hover:bg-white/5 transition">Déconnexion</button>
@@ -52,14 +52,14 @@ export default function NavClient({ user }: { user: User }) {
           )}
         </div>
       ) : (
-        <Link href="/login" className="btn-primary text-sm px-4 py-2 rounded-lg">
+        <Link href="/login" className="btn-primary text-sm px-4 py-2 rounded-lg hidden md:inline-block">
           Connexion
         </Link>
       )}
 
       {/* Burger mobile */}
       <button
-        className="md:hidden text-white ml-2"
+        className="md:hidden text-white ml-2 w-11 h-11 flex items-center justify-center"
         onClick={() => setBurgerOpen((o) => !o)}
         aria-label="Menu"
       >
@@ -69,7 +69,7 @@ export default function NavClient({ user }: { user: User }) {
       {/* Mobile menu overlay */}
       {burgerOpen && (
         <div className="fixed inset-0 bg-black/95 z-40 flex flex-col items-center justify-center gap-8 md:hidden">
-          <button className="absolute top-4 right-4 text-white text-2xl" onClick={() => setBurgerOpen(false)}>✕</button>
+          <button className="absolute top-4 right-4 text-white text-2xl w-11 h-11 flex items-center justify-center" onClick={() => setBurgerOpen(false)}>✕</button>
           {[
             { href: "/", label: "Accueil" },
             { href: "/calendrier", label: "Calendrier" },
