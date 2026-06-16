@@ -4,7 +4,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-export default function LoginForm({ signupAction }: { signupAction: (fd: FormData) => Promise<{ error: string } | void> }) {
+export default function LoginForm({ signup }: { signup: (fd: FormData) => Promise<{ error: string } | void> }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function LoginForm({ signupAction }: { signupAction: (fd: FormDat
     e.preventDefault();
     setLoading(true);
     setError("");
-    const result = await signupAction(new FormData(e.currentTarget));
+    const result = await signup(new FormData(e.currentTarget));
     if (result?.error) {
       setError(result.error);
       setLoading(false);
