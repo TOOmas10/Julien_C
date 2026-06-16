@@ -113,6 +113,11 @@ body {
   color: rgba(255, 255, 255, 0.4);
 }
 
+.input-dj option {
+  background-color: #0d0a2e;
+  color: #fff;
+}
+
 .badge-attente {
   background-color: #FFC03C;
   color: #000;
@@ -120,6 +125,7 @@ body {
   border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge-validee {
@@ -129,6 +135,7 @@ body {
   border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge-refusee {
@@ -138,6 +145,7 @@ body {
   border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .card-dj {
