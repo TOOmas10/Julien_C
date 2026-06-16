@@ -2,6 +2,9 @@
   "name": "dj-website",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,7 +23,6 @@
     "next": "16.2.9",
     "next-themes": "^0.4.6",
     "pg": "^8.21.0",
-    "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.79.0",
@@ -37,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
+    "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.4",
     "typescript": "^5"
