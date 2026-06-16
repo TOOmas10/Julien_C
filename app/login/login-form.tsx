@@ -14,17 +14,22 @@ export default function LoginForm({ signup }: { signup: (fd: FormData) => Promis
     e.preventDefault();
     setLoading(true);
     setError("");
-    const fd = new FormData(e.currentTarget);
-    const result = await authClient.signIn.email({
-      email: fd.get("email") as string,
-      password: fd.get("password") as string,
-    });
-    if (result.error) {
-      setError("Email ou mot de passe incorrect.");
+    try {
+      const fd = new FormData(e.currentTarget);
+      const result = await authClient.signIn.email({
+        email: fd.get("email") as string,
+        password: fd.get("password") as string,
+      });
+      if (result.error) {
+        setError("Email ou mot de passe incorrect.");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch {
+      setError("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
       setLoading(false);
-    } else {
-      router.push("/");
-      router.refresh();
     }
   }
 
@@ -32,9 +37,14 @@ export default function LoginForm({ signup }: { signup: (fd: FormData) => Promis
     e.preventDefault();
     setLoading(true);
     setError("");
-    const result = await signup(new FormData(e.currentTarget));
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await signup(new FormData(e.currentTarget));
+      if (result?.error) {
+        setError(result.error);
+      }
+    } catch {
+      setError("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
       setLoading(false);
     }
   }
@@ -44,13 +54,19 @@ export default function LoginForm({ signup }: { signup: (fd: FormData) => Promis
       <div className="flex mb-8 border border-white/10 rounded-lg overflow-hidden">
         <button
           onClick={() => setMode("login")}
-          className={`flex-1 py-3 text-sm font-medium transition ${mode === "login" ? "bg-[#3b2fb5] text-white" : "text-white/60 hover:text-white"}`}
+          disabled={loading}
+          className={`flex-1 py-3 text-sm font-medium transition disabled:opacity-50 ${
+            mode === "login" ? "bg-[#3b2fb5] text-white" : "text-white/60 hover:text-white"
+          }`}
         >
           Connexion
         </button>
         <button
           onClick={() => setMode("signup")}
-          className={`flex-1 py-3 text-sm font-medium transition ${mode === "signup" ? "bg-[#3b2fb5] text-white" : "text-white/60 hover:text-white"}`}
+          disabled={loading}
+          className={`flex-1 py-3 text-sm font-medium transition disabled:opacity-50 ${
+            mode === "signup" ? "bg-[#3b2fb5] text-white" : "text-white/60 hover:text-white"
+          }`}
         >
           Inscription
         </button>

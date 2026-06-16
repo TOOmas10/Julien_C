@@ -10,7 +10,7 @@ export async function signup(formData: FormData) {
   const password = formData.get("password") as string;
   const nom = formData.get("nom") as string;
   const prenom = formData.get("prenom") as string;
-  const tel = formData.get("tel") as string;
+  const tel = (formData.get("tel") as string) || undefined;
   const name = `${prenom} ${nom}`.trim();
 
   const result = await auth.api.signUpEmail({
