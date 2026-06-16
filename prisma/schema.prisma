@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  nom   String
+  users User[]
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  nom           String?
+  prenom        String?
+  tel           String?
+  roleId        Int      @default(1)
+  role          Role     @relation(fields: [roleId], references: [id])
+  sessions      Session[]
+  accounts      Account[]
+  avis          Avis[]
+  reservations  Reservation[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+}
+
+model Prestation {
+  id          Int           @id @default(autoincrement())
+  type        String
+  demandesResa DemandeResa[]
+}
+
+model Etat {
+  id           Int           @id @default(autoincrement())
+  statut       String
+  reservations Reservation[]
+}
+
+model DemandeResa {
+  id                  Int          @id @default(autoincrement())
+  date                DateTime
+  infoComplementaires String?
+  prestationId        Int
+  prestation          Prestation   @relation(fields: [prestationId], references: [id])
+  reservation         Reservation?
+}
+
+model Reservation {
+  userId        String
+  demandeResaId Int         @unique
+  etatId        Int
+  date          DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  demande       DemandeResa @relation(fields: [demandeResaId], references: [id], onDelete: Cascade)
+  etat          Etat        @relation(fields: [etatId], references: [id])
+
+  @@id([userId, demandeResaId])
+}
+
+model Avis {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @default(now())
+  contenu String
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Soiree {
+  id          Int      @id @default(autoincrement())
+  titre       String
+  date        DateTime
+  lieu        String
+  ville       String
+  description String?
+}
