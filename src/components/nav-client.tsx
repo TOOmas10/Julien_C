@@ -81,6 +81,11 @@ export default function NavClient({ user }: { user: User }) {
               {l.label}
             </Link>
           ))}
+          {user?.roleId === 2 && (
+            <Link href="/admin" className="text-white text-2xl hover:text-[#3b2fb5] transition" onClick={() => setBurgerOpen(false)}>
+              Admin
+            </Link>
+          )}
           {user ? (
             <>
               <Link href="/profil" className="text-white text-xl" onClick={() => setBurgerOpen(false)}>Mon profil</Link>
