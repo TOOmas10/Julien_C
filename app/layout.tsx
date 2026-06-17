@@ -53,9 +53,9 @@ export default function RootLayout({
   return (
     <html lang="fr" className="h-full" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/logo.png" type="image/png" sizes="512x512" />
-        <link rel="shortcut icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
+        <link rel="shortcut icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
       </head>
       <body className={cn(poppins, "antialiased", "h-full")}>
         <ThemeProvider
