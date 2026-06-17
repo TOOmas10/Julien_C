@@ -100,8 +100,9 @@ Le site utilise **Resend** pour envoyer des emails.
 | Déclencheur | Destinataire |
 |---|---|
 | Nouvelle demande de réservation | Client + DJ |
-| Statut passé à "Confirmée" | Client + DJ |
-| Statut passé à "Annulée" | Client + DJ |
+| Client modifie sa réservation | Client uniquement |
+| Statut passé à "Confirmée" | Client uniquement |
+| Statut passé à "Annulée" | Client uniquement |
 
 ### Limitation importante — Nom de domaine requis
 
