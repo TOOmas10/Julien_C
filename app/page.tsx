@@ -42,7 +42,7 @@ export default async function HomePage({
           priority
           quality={85}
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-center -z-10"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.35)_50%,#000_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,var(--primary-glow)_0%,transparent_55%)] opacity-40 pointer-events-none" />
