@@ -1,19 +1,26 @@
-import { auth } from "@/lib/auth";
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Calendrier",
+  description: "Consultez les disponibilités de DJ Julien C et réservez votre date en ligne.",
+  robots: { index: false, follow: false },
+};
+import { auth } from "@/lib/auth";
+import Footer from "@/components/footer";
 import CalendarClient from "./calendar-client";
+import HeaderAvis from "@/components/header-avis";
 
-export default async function CalendrierPage() {
+export default async function CalendarPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const prestations = await prisma.prestation.findMany();
+  if (!session) redirect("/?auth_error=1");
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-8 text-center">Réserver une date</h1>
-      <CalendarClient prestations={prestations} />
-    </div>
+    <>
+      <HeaderAvis />
+      <CalendarClient />
+      <Footer />
+    </>
   );
 }

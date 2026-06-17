@@ -28,10 +28,12 @@ export type AggregateSoiree = {
 
 export type SoireeAvgAggregateOutputType = {
   id: number | null
+  demandeResaId: number | null
 }
 
 export type SoireeSumAggregateOutputType = {
   id: number | null
+  demandeResaId: number | null
 }
 
 export type SoireeMinAggregateOutputType = {
@@ -41,6 +43,7 @@ export type SoireeMinAggregateOutputType = {
   lieu: string | null
   ville: string | null
   description: string | null
+  demandeResaId: number | null
 }
 
 export type SoireeMaxAggregateOutputType = {
@@ -50,6 +53,7 @@ export type SoireeMaxAggregateOutputType = {
   lieu: string | null
   ville: string | null
   description: string | null
+  demandeResaId: number | null
 }
 
 export type SoireeCountAggregateOutputType = {
@@ -59,16 +63,19 @@ export type SoireeCountAggregateOutputType = {
   lieu: number
   ville: number
   description: number
+  demandeResaId: number
   _all: number
 }
 
 
 export type SoireeAvgAggregateInputType = {
   id?: true
+  demandeResaId?: true
 }
 
 export type SoireeSumAggregateInputType = {
   id?: true
+  demandeResaId?: true
 }
 
 export type SoireeMinAggregateInputType = {
@@ -78,6 +85,7 @@ export type SoireeMinAggregateInputType = {
   lieu?: true
   ville?: true
   description?: true
+  demandeResaId?: true
 }
 
 export type SoireeMaxAggregateInputType = {
@@ -87,6 +95,7 @@ export type SoireeMaxAggregateInputType = {
   lieu?: true
   ville?: true
   description?: true
+  demandeResaId?: true
 }
 
 export type SoireeCountAggregateInputType = {
@@ -96,6 +105,7 @@ export type SoireeCountAggregateInputType = {
   lieu?: true
   ville?: true
   description?: true
+  demandeResaId?: true
   _all?: true
 }
 
@@ -192,6 +202,7 @@ export type SoireeGroupByOutputType = {
   lieu: string
   ville: string
   description: string | null
+  demandeResaId: number | null
   _count: SoireeCountAggregateOutputType | null
   _avg: SoireeAvgAggregateOutputType | null
   _sum: SoireeSumAggregateOutputType | null
@@ -224,6 +235,8 @@ export type SoireeWhereInput = {
   lieu?: Prisma.StringFilter<"Soiree"> | string
   ville?: Prisma.StringFilter<"Soiree"> | string
   description?: Prisma.StringNullableFilter<"Soiree"> | string | null
+  demandeResaId?: Prisma.IntNullableFilter<"Soiree"> | number | null
+  demande?: Prisma.XOR<Prisma.DemandeResaNullableScalarRelationFilter, Prisma.DemandeResaWhereInput> | null
 }
 
 export type SoireeOrderByWithRelationInput = {
@@ -233,10 +246,13 @@ export type SoireeOrderByWithRelationInput = {
   lieu?: Prisma.SortOrder
   ville?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  demande?: Prisma.DemandeResaOrderByWithRelationInput
 }
 
 export type SoireeWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  demandeResaId?: number
   AND?: Prisma.SoireeWhereInput | Prisma.SoireeWhereInput[]
   OR?: Prisma.SoireeWhereInput[]
   NOT?: Prisma.SoireeWhereInput | Prisma.SoireeWhereInput[]
@@ -245,7 +261,8 @@ export type SoireeWhereUniqueInput = Prisma.AtLeast<{
   lieu?: Prisma.StringFilter<"Soiree"> | string
   ville?: Prisma.StringFilter<"Soiree"> | string
   description?: Prisma.StringNullableFilter<"Soiree"> | string | null
-}, "id">
+  demande?: Prisma.XOR<Prisma.DemandeResaNullableScalarRelationFilter, Prisma.DemandeResaWhereInput> | null
+}, "id" | "demandeResaId">
 
 export type SoireeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -254,6 +271,7 @@ export type SoireeOrderByWithAggregationInput = {
   lieu?: Prisma.SortOrder
   ville?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SoireeCountOrderByAggregateInput
   _avg?: Prisma.SoireeAvgOrderByAggregateInput
   _max?: Prisma.SoireeMaxOrderByAggregateInput
@@ -271,6 +289,7 @@ export type SoireeScalarWhereWithAggregatesInput = {
   lieu?: Prisma.StringWithAggregatesFilter<"Soiree"> | string
   ville?: Prisma.StringWithAggregatesFilter<"Soiree"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Soiree"> | string | null
+  demandeResaId?: Prisma.IntNullableWithAggregatesFilter<"Soiree"> | number | null
 }
 
 export type SoireeCreateInput = {
@@ -279,6 +298,7 @@ export type SoireeCreateInput = {
   lieu: string
   ville: string
   description?: string | null
+  demande?: Prisma.DemandeResaCreateNestedOneWithoutSoireeInput
 }
 
 export type SoireeUncheckedCreateInput = {
@@ -288,6 +308,7 @@ export type SoireeUncheckedCreateInput = {
   lieu: string
   ville: string
   description?: string | null
+  demandeResaId?: number | null
 }
 
 export type SoireeUpdateInput = {
@@ -296,6 +317,7 @@ export type SoireeUpdateInput = {
   lieu?: Prisma.StringFieldUpdateOperationsInput | string
   ville?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  demande?: Prisma.DemandeResaUpdateOneWithoutSoireeNestedInput
 }
 
 export type SoireeUncheckedUpdateInput = {
@@ -305,6 +327,7 @@ export type SoireeUncheckedUpdateInput = {
   lieu?: Prisma.StringFieldUpdateOperationsInput | string
   ville?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  demandeResaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SoireeCreateManyInput = {
@@ -314,6 +337,7 @@ export type SoireeCreateManyInput = {
   lieu: string
   ville: string
   description?: string | null
+  demandeResaId?: number | null
 }
 
 export type SoireeUpdateManyMutationInput = {
@@ -331,6 +355,12 @@ export type SoireeUncheckedUpdateManyInput = {
   lieu?: Prisma.StringFieldUpdateOperationsInput | string
   ville?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  demandeResaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type SoireeNullableScalarRelationFilter = {
+  is?: Prisma.SoireeWhereInput | null
+  isNot?: Prisma.SoireeWhereInput | null
 }
 
 export type SoireeCountOrderByAggregateInput = {
@@ -340,10 +370,12 @@ export type SoireeCountOrderByAggregateInput = {
   lieu?: Prisma.SortOrder
   ville?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrder
 }
 
 export type SoireeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrder
 }
 
 export type SoireeMaxOrderByAggregateInput = {
@@ -353,6 +385,7 @@ export type SoireeMaxOrderByAggregateInput = {
   lieu?: Prisma.SortOrder
   ville?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrder
 }
 
 export type SoireeMinOrderByAggregateInput = {
@@ -362,10 +395,102 @@ export type SoireeMinOrderByAggregateInput = {
   lieu?: Prisma.SortOrder
   ville?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrder
 }
 
 export type SoireeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  demandeResaId?: Prisma.SortOrder
+}
+
+export type SoireeCreateNestedOneWithoutDemandeInput = {
+  create?: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+  connectOrCreate?: Prisma.SoireeCreateOrConnectWithoutDemandeInput
+  connect?: Prisma.SoireeWhereUniqueInput
+}
+
+export type SoireeUncheckedCreateNestedOneWithoutDemandeInput = {
+  create?: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+  connectOrCreate?: Prisma.SoireeCreateOrConnectWithoutDemandeInput
+  connect?: Prisma.SoireeWhereUniqueInput
+}
+
+export type SoireeUpdateOneWithoutDemandeNestedInput = {
+  create?: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+  connectOrCreate?: Prisma.SoireeCreateOrConnectWithoutDemandeInput
+  upsert?: Prisma.SoireeUpsertWithoutDemandeInput
+  disconnect?: Prisma.SoireeWhereInput | boolean
+  delete?: Prisma.SoireeWhereInput | boolean
+  connect?: Prisma.SoireeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SoireeUpdateToOneWithWhereWithoutDemandeInput, Prisma.SoireeUpdateWithoutDemandeInput>, Prisma.SoireeUncheckedUpdateWithoutDemandeInput>
+}
+
+export type SoireeUncheckedUpdateOneWithoutDemandeNestedInput = {
+  create?: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+  connectOrCreate?: Prisma.SoireeCreateOrConnectWithoutDemandeInput
+  upsert?: Prisma.SoireeUpsertWithoutDemandeInput
+  disconnect?: Prisma.SoireeWhereInput | boolean
+  delete?: Prisma.SoireeWhereInput | boolean
+  connect?: Prisma.SoireeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SoireeUpdateToOneWithWhereWithoutDemandeInput, Prisma.SoireeUpdateWithoutDemandeInput>, Prisma.SoireeUncheckedUpdateWithoutDemandeInput>
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type SoireeCreateWithoutDemandeInput = {
+  titre: string
+  date: Date | string
+  lieu: string
+  ville: string
+  description?: string | null
+}
+
+export type SoireeUncheckedCreateWithoutDemandeInput = {
+  id?: number
+  titre: string
+  date: Date | string
+  lieu: string
+  ville: string
+  description?: string | null
+}
+
+export type SoireeCreateOrConnectWithoutDemandeInput = {
+  where: Prisma.SoireeWhereUniqueInput
+  create: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+}
+
+export type SoireeUpsertWithoutDemandeInput = {
+  update: Prisma.XOR<Prisma.SoireeUpdateWithoutDemandeInput, Prisma.SoireeUncheckedUpdateWithoutDemandeInput>
+  create: Prisma.XOR<Prisma.SoireeCreateWithoutDemandeInput, Prisma.SoireeUncheckedCreateWithoutDemandeInput>
+  where?: Prisma.SoireeWhereInput
+}
+
+export type SoireeUpdateToOneWithWhereWithoutDemandeInput = {
+  where?: Prisma.SoireeWhereInput
+  data: Prisma.XOR<Prisma.SoireeUpdateWithoutDemandeInput, Prisma.SoireeUncheckedUpdateWithoutDemandeInput>
+}
+
+export type SoireeUpdateWithoutDemandeInput = {
+  titre?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lieu?: Prisma.StringFieldUpdateOperationsInput | string
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type SoireeUncheckedUpdateWithoutDemandeInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  titre?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lieu?: Prisma.StringFieldUpdateOperationsInput | string
+  ville?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -377,6 +502,8 @@ export type SoireeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   lieu?: boolean
   ville?: boolean
   description?: boolean
+  demandeResaId?: boolean
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
 }, ExtArgs["result"]["soiree"]>
 
 export type SoireeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -386,6 +513,8 @@ export type SoireeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   lieu?: boolean
   ville?: boolean
   description?: boolean
+  demandeResaId?: boolean
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
 }, ExtArgs["result"]["soiree"]>
 
 export type SoireeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -395,6 +524,8 @@ export type SoireeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   lieu?: boolean
   ville?: boolean
   description?: boolean
+  demandeResaId?: boolean
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
 }, ExtArgs["result"]["soiree"]>
 
 export type SoireeSelectScalar = {
@@ -404,13 +535,25 @@ export type SoireeSelectScalar = {
   lieu?: boolean
   ville?: boolean
   description?: boolean
+  demandeResaId?: boolean
 }
 
-export type SoireeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "titre" | "date" | "lieu" | "ville" | "description", ExtArgs["result"]["soiree"]>
+export type SoireeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "titre" | "date" | "lieu" | "ville" | "description" | "demandeResaId", ExtArgs["result"]["soiree"]>
+export type SoireeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
+}
+export type SoireeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
+}
+export type SoireeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  demande?: boolean | Prisma.Soiree$demandeArgs<ExtArgs>
+}
 
 export type $SoireePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Soiree"
-  objects: {}
+  objects: {
+    demande: Prisma.$DemandeResaPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     titre: string
@@ -418,6 +561,7 @@ export type $SoireePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     lieu: string
     ville: string
     description: string | null
+    demandeResaId: number | null
   }, ExtArgs["result"]["soiree"]>
   composites: {}
 }
@@ -812,6 +956,7 @@ readonly fields: SoireeFieldRefs;
  */
 export interface Prisma__SoireeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  demande<T extends Prisma.Soiree$demandeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Soiree$demandeArgs<ExtArgs>>): Prisma.Prisma__DemandeResaClient<runtime.Types.Result.GetResult<Prisma.$DemandeResaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -847,6 +992,7 @@ export interface SoireeFieldRefs {
   readonly lieu: Prisma.FieldRef<"Soiree", 'String'>
   readonly ville: Prisma.FieldRef<"Soiree", 'String'>
   readonly description: Prisma.FieldRef<"Soiree", 'String'>
+  readonly demandeResaId: Prisma.FieldRef<"Soiree", 'Int'>
 }
     
 
@@ -863,6 +1009,10 @@ export type SoireeFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
   /**
    * Filter, which Soiree to fetch.
    */
@@ -882,6 +1032,10 @@ export type SoireeFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
+  /**
    * Filter, which Soiree to fetch.
    */
   where: Prisma.SoireeWhereUniqueInput
@@ -899,6 +1053,10 @@ export type SoireeFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
   /**
    * Filter, which Soiree to fetch.
    */
@@ -948,6 +1106,10 @@ export type SoireeFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
+  /**
    * Filter, which Soiree to fetch.
    */
   where?: Prisma.SoireeWhereInput
@@ -995,6 +1157,10 @@ export type SoireeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
   /**
    * Filter, which Soirees to fetch.
    */
@@ -1044,6 +1210,10 @@ export type SoireeCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
+  /**
    * The data needed to create a Soiree.
    */
   data: Prisma.XOR<Prisma.SoireeCreateInput, Prisma.SoireeUncheckedCreateInput>
@@ -1077,6 +1247,10 @@ export type SoireeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.SoireeCreateManyInput | Prisma.SoireeCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1091,6 +1265,10 @@ export type SoireeUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
   /**
    * The data needed to update a Soiree.
    */
@@ -1143,6 +1321,10 @@ export type SoireeUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many Soirees to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1157,6 +1339,10 @@ export type SoireeUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
   /**
    * The filter to search for the Soiree to update in case it exists.
    */
@@ -1184,6 +1370,10 @@ export type SoireeDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
+  /**
    * Filter which Soiree to delete.
    */
   where: Prisma.SoireeWhereUniqueInput
@@ -1204,6 +1394,25 @@ export type SoireeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
+ * Soiree.demande
+ */
+export type Soiree$demandeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DemandeResa
+   */
+  select?: Prisma.DemandeResaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DemandeResa
+   */
+  omit?: Prisma.DemandeResaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DemandeResaInclude<ExtArgs> | null
+  where?: Prisma.DemandeResaWhereInput
+}
+
+/**
  * Soiree without action
  */
 export type SoireeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1215,4 +1424,8 @@ export type SoireeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Soiree
    */
   omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
 }

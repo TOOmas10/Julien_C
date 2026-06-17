@@ -1376,6 +1376,7 @@ export type ReservationScalarFieldEnum = (typeof ReservationScalarFieldEnum)[key
 export const AvisScalarFieldEnum = {
   id: 'id',
   date: 'date',
+  note: 'note',
   contenu: 'contenu',
   userId: 'userId'
 } as const
@@ -1389,7 +1390,8 @@ export const SoireeScalarFieldEnum = {
   date: 'date',
   lieu: 'lieu',
   ville: 'ville',
-  description: 'description'
+  description: 'description',
+  demandeResaId: 'demandeResaId'
 } as const
 
 export type SoireeScalarFieldEnum = (typeof SoireeScalarFieldEnum)[keyof typeof SoireeScalarFieldEnum]

@@ -324,3 +324,5 @@ src/lib/actions/
 - Better Auth gère le hachage des mots de passe (pas besoin de `password_hash` manuel)
 - `prisma.config.ts` existant — vérifier qu'il charge bien le `.env`
 - Seed à lancer après `prisma migrate dev`
+- Better Auth nécessite `additionalFields` dans `auth.ts` pour exposer `nom`, `prenom`, `tel`, `roleId` sur la session côté client
+- La vérification admin se fait toujours côté serveur (`session.user.roleId === 2`), jamais uniquement côté client

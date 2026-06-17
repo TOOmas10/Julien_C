@@ -1,9 +1,47 @@
+import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import { ThemeProvider } from "@/components/theme-provider";
+import CookieBanner from "@/components/cookie-banner";
+import VercelAnalytics from "@/components/vercel-analytics";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
+  title: {
+    template: "%s | Julien C — DJ",
+    default: "Julien C — DJ Événementiel",
+  },
+  description:
+    "DJ Julien C, spécialiste des soirées événementielles : mariages, anniversaires, soirées privées. Réservez votre date en ligne.",
+  keywords: ["DJ", "Julien C", "événementiel", "mariage", "soirée privée", "anniversaire", "DJ Corse", "DJ Julien"],
+  authors: [{ name: "Julien C" }],
+  creator: "Julien C",
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: APP_URL,
+    siteName: "Julien C — DJ",
+    title: "Julien C — DJ Événementiel",
+    description:
+      "DJ Julien C, spécialiste des soirées événementielles : mariages, anniversaires, soirées privées.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Julien C — DJ" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Julien C — DJ Événementiel",
+    description: "DJ Julien C, spécialiste des soirées événementielles.",
+    images: ["/og-image.png"],
+  },
+  robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png", sizes: "500x500" }],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
+  },
+};
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -11,17 +49,25 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="fr" className="h-full">
-      <head />
-      <body className={cn(poppins.variable, "font-sans antialiased bg-black text-white min-h-screen")}>
-        <Navbar />
-        <main className="pt-16">
+    <html lang="fr" className="h-full" suppressHydrationWarning>
+      <body className={cn(poppins, "antialiased", "h-full")}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
-        </main>
-        <Footer />
-        <Toaster />
+          <CookieBanner />
+          <VercelAnalytics />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

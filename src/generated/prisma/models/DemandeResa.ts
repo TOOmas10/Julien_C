@@ -214,6 +214,7 @@ export type DemandeResaWhereInput = {
   prestationId?: Prisma.IntFilter<"DemandeResa"> | number
   prestation?: Prisma.XOR<Prisma.PrestationScalarRelationFilter, Prisma.PrestationWhereInput>
   reservation?: Prisma.XOR<Prisma.ReservationNullableScalarRelationFilter, Prisma.ReservationWhereInput> | null
+  soiree?: Prisma.XOR<Prisma.SoireeNullableScalarRelationFilter, Prisma.SoireeWhereInput> | null
 }
 
 export type DemandeResaOrderByWithRelationInput = {
@@ -223,6 +224,7 @@ export type DemandeResaOrderByWithRelationInput = {
   prestationId?: Prisma.SortOrder
   prestation?: Prisma.PrestationOrderByWithRelationInput
   reservation?: Prisma.ReservationOrderByWithRelationInput
+  soiree?: Prisma.SoireeOrderByWithRelationInput
 }
 
 export type DemandeResaWhereUniqueInput = Prisma.AtLeast<{
@@ -235,6 +237,7 @@ export type DemandeResaWhereUniqueInput = Prisma.AtLeast<{
   prestationId?: Prisma.IntFilter<"DemandeResa"> | number
   prestation?: Prisma.XOR<Prisma.PrestationScalarRelationFilter, Prisma.PrestationWhereInput>
   reservation?: Prisma.XOR<Prisma.ReservationNullableScalarRelationFilter, Prisma.ReservationWhereInput> | null
+  soiree?: Prisma.XOR<Prisma.SoireeNullableScalarRelationFilter, Prisma.SoireeWhereInput> | null
 }, "id">
 
 export type DemandeResaOrderByWithAggregationInput = {
@@ -264,6 +267,7 @@ export type DemandeResaCreateInput = {
   infoComplementaires?: string | null
   prestation: Prisma.PrestationCreateNestedOneWithoutDemandesResaInput
   reservation?: Prisma.ReservationCreateNestedOneWithoutDemandeInput
+  soiree?: Prisma.SoireeCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaUncheckedCreateInput = {
@@ -272,6 +276,7 @@ export type DemandeResaUncheckedCreateInput = {
   infoComplementaires?: string | null
   prestationId: number
   reservation?: Prisma.ReservationUncheckedCreateNestedOneWithoutDemandeInput
+  soiree?: Prisma.SoireeUncheckedCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaUpdateInput = {
@@ -279,6 +284,7 @@ export type DemandeResaUpdateInput = {
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prestation?: Prisma.PrestationUpdateOneRequiredWithoutDemandesResaNestedInput
   reservation?: Prisma.ReservationUpdateOneWithoutDemandeNestedInput
+  soiree?: Prisma.SoireeUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaUncheckedUpdateInput = {
@@ -287,6 +293,7 @@ export type DemandeResaUncheckedUpdateInput = {
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prestationId?: Prisma.IntFieldUpdateOperationsInput | number
   reservation?: Prisma.ReservationUncheckedUpdateOneWithoutDemandeNestedInput
+  soiree?: Prisma.SoireeUncheckedUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaCreateManyInput = {
@@ -354,6 +361,11 @@ export type DemandeResaScalarRelationFilter = {
   isNot?: Prisma.DemandeResaWhereInput
 }
 
+export type DemandeResaNullableScalarRelationFilter = {
+  is?: Prisma.DemandeResaWhereInput | null
+  isNot?: Prisma.DemandeResaWhereInput | null
+}
+
 export type DemandeResaCreateNestedManyWithoutPrestationInput = {
   create?: Prisma.XOR<Prisma.DemandeResaCreateWithoutPrestationInput, Prisma.DemandeResaUncheckedCreateWithoutPrestationInput> | Prisma.DemandeResaCreateWithoutPrestationInput[] | Prisma.DemandeResaUncheckedCreateWithoutPrestationInput[]
   connectOrCreate?: Prisma.DemandeResaCreateOrConnectWithoutPrestationInput | Prisma.DemandeResaCreateOrConnectWithoutPrestationInput[]
@@ -410,10 +422,27 @@ export type DemandeResaUpdateOneRequiredWithoutReservationNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DemandeResaUpdateToOneWithWhereWithoutReservationInput, Prisma.DemandeResaUpdateWithoutReservationInput>, Prisma.DemandeResaUncheckedUpdateWithoutReservationInput>
 }
 
+export type DemandeResaCreateNestedOneWithoutSoireeInput = {
+  create?: Prisma.XOR<Prisma.DemandeResaCreateWithoutSoireeInput, Prisma.DemandeResaUncheckedCreateWithoutSoireeInput>
+  connectOrCreate?: Prisma.DemandeResaCreateOrConnectWithoutSoireeInput
+  connect?: Prisma.DemandeResaWhereUniqueInput
+}
+
+export type DemandeResaUpdateOneWithoutSoireeNestedInput = {
+  create?: Prisma.XOR<Prisma.DemandeResaCreateWithoutSoireeInput, Prisma.DemandeResaUncheckedCreateWithoutSoireeInput>
+  connectOrCreate?: Prisma.DemandeResaCreateOrConnectWithoutSoireeInput
+  upsert?: Prisma.DemandeResaUpsertWithoutSoireeInput
+  disconnect?: Prisma.DemandeResaWhereInput | boolean
+  delete?: Prisma.DemandeResaWhereInput | boolean
+  connect?: Prisma.DemandeResaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DemandeResaUpdateToOneWithWhereWithoutSoireeInput, Prisma.DemandeResaUpdateWithoutSoireeInput>, Prisma.DemandeResaUncheckedUpdateWithoutSoireeInput>
+}
+
 export type DemandeResaCreateWithoutPrestationInput = {
   date: Date | string
   infoComplementaires?: string | null
   reservation?: Prisma.ReservationCreateNestedOneWithoutDemandeInput
+  soiree?: Prisma.SoireeCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaUncheckedCreateWithoutPrestationInput = {
@@ -421,6 +450,7 @@ export type DemandeResaUncheckedCreateWithoutPrestationInput = {
   date: Date | string
   infoComplementaires?: string | null
   reservation?: Prisma.ReservationUncheckedCreateNestedOneWithoutDemandeInput
+  soiree?: Prisma.SoireeUncheckedCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaCreateOrConnectWithoutPrestationInput = {
@@ -463,6 +493,7 @@ export type DemandeResaCreateWithoutReservationInput = {
   date: Date | string
   infoComplementaires?: string | null
   prestation: Prisma.PrestationCreateNestedOneWithoutDemandesResaInput
+  soiree?: Prisma.SoireeCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaUncheckedCreateWithoutReservationInput = {
@@ -470,6 +501,7 @@ export type DemandeResaUncheckedCreateWithoutReservationInput = {
   date: Date | string
   infoComplementaires?: string | null
   prestationId: number
+  soiree?: Prisma.SoireeUncheckedCreateNestedOneWithoutDemandeInput
 }
 
 export type DemandeResaCreateOrConnectWithoutReservationInput = {
@@ -492,6 +524,7 @@ export type DemandeResaUpdateWithoutReservationInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prestation?: Prisma.PrestationUpdateOneRequiredWithoutDemandesResaNestedInput
+  soiree?: Prisma.SoireeUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaUncheckedUpdateWithoutReservationInput = {
@@ -499,6 +532,53 @@ export type DemandeResaUncheckedUpdateWithoutReservationInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   prestationId?: Prisma.IntFieldUpdateOperationsInput | number
+  soiree?: Prisma.SoireeUncheckedUpdateOneWithoutDemandeNestedInput
+}
+
+export type DemandeResaCreateWithoutSoireeInput = {
+  date: Date | string
+  infoComplementaires?: string | null
+  prestation: Prisma.PrestationCreateNestedOneWithoutDemandesResaInput
+  reservation?: Prisma.ReservationCreateNestedOneWithoutDemandeInput
+}
+
+export type DemandeResaUncheckedCreateWithoutSoireeInput = {
+  id?: number
+  date: Date | string
+  infoComplementaires?: string | null
+  prestationId: number
+  reservation?: Prisma.ReservationUncheckedCreateNestedOneWithoutDemandeInput
+}
+
+export type DemandeResaCreateOrConnectWithoutSoireeInput = {
+  where: Prisma.DemandeResaWhereUniqueInput
+  create: Prisma.XOR<Prisma.DemandeResaCreateWithoutSoireeInput, Prisma.DemandeResaUncheckedCreateWithoutSoireeInput>
+}
+
+export type DemandeResaUpsertWithoutSoireeInput = {
+  update: Prisma.XOR<Prisma.DemandeResaUpdateWithoutSoireeInput, Prisma.DemandeResaUncheckedUpdateWithoutSoireeInput>
+  create: Prisma.XOR<Prisma.DemandeResaCreateWithoutSoireeInput, Prisma.DemandeResaUncheckedCreateWithoutSoireeInput>
+  where?: Prisma.DemandeResaWhereInput
+}
+
+export type DemandeResaUpdateToOneWithWhereWithoutSoireeInput = {
+  where?: Prisma.DemandeResaWhereInput
+  data: Prisma.XOR<Prisma.DemandeResaUpdateWithoutSoireeInput, Prisma.DemandeResaUncheckedUpdateWithoutSoireeInput>
+}
+
+export type DemandeResaUpdateWithoutSoireeInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  prestation?: Prisma.PrestationUpdateOneRequiredWithoutDemandesResaNestedInput
+  reservation?: Prisma.ReservationUpdateOneWithoutDemandeNestedInput
+}
+
+export type DemandeResaUncheckedUpdateWithoutSoireeInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  prestationId?: Prisma.IntFieldUpdateOperationsInput | number
+  reservation?: Prisma.ReservationUncheckedUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaCreateManyPrestationInput = {
@@ -511,6 +591,7 @@ export type DemandeResaUpdateWithoutPrestationInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reservation?: Prisma.ReservationUpdateOneWithoutDemandeNestedInput
+  soiree?: Prisma.SoireeUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaUncheckedUpdateWithoutPrestationInput = {
@@ -518,6 +599,7 @@ export type DemandeResaUncheckedUpdateWithoutPrestationInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   infoComplementaires?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reservation?: Prisma.ReservationUncheckedUpdateOneWithoutDemandeNestedInput
+  soiree?: Prisma.SoireeUncheckedUpdateOneWithoutDemandeNestedInput
 }
 
 export type DemandeResaUncheckedUpdateManyWithoutPrestationInput = {
@@ -535,6 +617,7 @@ export type DemandeResaSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   prestationId?: boolean
   prestation?: boolean | Prisma.PrestationDefaultArgs<ExtArgs>
   reservation?: boolean | Prisma.DemandeResa$reservationArgs<ExtArgs>
+  soiree?: boolean | Prisma.DemandeResa$soireeArgs<ExtArgs>
 }, ExtArgs["result"]["demandeResa"]>
 
 export type DemandeResaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -564,6 +647,7 @@ export type DemandeResaOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type DemandeResaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   prestation?: boolean | Prisma.PrestationDefaultArgs<ExtArgs>
   reservation?: boolean | Prisma.DemandeResa$reservationArgs<ExtArgs>
+  soiree?: boolean | Prisma.DemandeResa$soireeArgs<ExtArgs>
 }
 export type DemandeResaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   prestation?: boolean | Prisma.PrestationDefaultArgs<ExtArgs>
@@ -577,6 +661,7 @@ export type $DemandeResaPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     prestation: Prisma.$PrestationPayload<ExtArgs>
     reservation: Prisma.$ReservationPayload<ExtArgs> | null
+    soiree: Prisma.$SoireePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -979,6 +1064,7 @@ export interface Prisma__DemandeResaClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   prestation<T extends Prisma.PrestationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PrestationDefaultArgs<ExtArgs>>): Prisma.Prisma__PrestationClient<runtime.Types.Result.GetResult<Prisma.$PrestationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   reservation<T extends Prisma.DemandeResa$reservationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DemandeResa$reservationArgs<ExtArgs>>): Prisma.Prisma__ReservationClient<runtime.Types.Result.GetResult<Prisma.$ReservationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  soiree<T extends Prisma.DemandeResa$soireeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DemandeResa$soireeArgs<ExtArgs>>): Prisma.Prisma__SoireeClient<runtime.Types.Result.GetResult<Prisma.$SoireePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1429,6 +1515,25 @@ export type DemandeResa$reservationArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.ReservationInclude<ExtArgs> | null
   where?: Prisma.ReservationWhereInput
+}
+
+/**
+ * DemandeResa.soiree
+ */
+export type DemandeResa$soireeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Soiree
+   */
+  select?: Prisma.SoireeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Soiree
+   */
+  omit?: Prisma.SoireeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SoireeInclude<ExtArgs> | null
+  where?: Prisma.SoireeWhereInput
 }
 
 /**

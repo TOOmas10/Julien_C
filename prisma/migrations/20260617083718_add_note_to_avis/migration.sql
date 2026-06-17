@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Avis" ADD COLUMN     "note" INTEGER NOT NULL DEFAULT 5;

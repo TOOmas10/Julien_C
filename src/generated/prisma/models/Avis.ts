@@ -28,15 +28,18 @@ export type AggregateAvis = {
 
 export type AvisAvgAggregateOutputType = {
   id: number | null
+  note: number | null
 }
 
 export type AvisSumAggregateOutputType = {
   id: number | null
+  note: number | null
 }
 
 export type AvisMinAggregateOutputType = {
   id: number | null
   date: Date | null
+  note: number | null
   contenu: string | null
   userId: string | null
 }
@@ -44,6 +47,7 @@ export type AvisMinAggregateOutputType = {
 export type AvisMaxAggregateOutputType = {
   id: number | null
   date: Date | null
+  note: number | null
   contenu: string | null
   userId: string | null
 }
@@ -51,6 +55,7 @@ export type AvisMaxAggregateOutputType = {
 export type AvisCountAggregateOutputType = {
   id: number
   date: number
+  note: number
   contenu: number
   userId: number
   _all: number
@@ -59,15 +64,18 @@ export type AvisCountAggregateOutputType = {
 
 export type AvisAvgAggregateInputType = {
   id?: true
+  note?: true
 }
 
 export type AvisSumAggregateInputType = {
   id?: true
+  note?: true
 }
 
 export type AvisMinAggregateInputType = {
   id?: true
   date?: true
+  note?: true
   contenu?: true
   userId?: true
 }
@@ -75,6 +83,7 @@ export type AvisMinAggregateInputType = {
 export type AvisMaxAggregateInputType = {
   id?: true
   date?: true
+  note?: true
   contenu?: true
   userId?: true
 }
@@ -82,6 +91,7 @@ export type AvisMaxAggregateInputType = {
 export type AvisCountAggregateInputType = {
   id?: true
   date?: true
+  note?: true
   contenu?: true
   userId?: true
   _all?: true
@@ -176,6 +186,7 @@ export type AvisGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type AvisGroupByOutputType = {
   id: number
   date: Date
+  note: number
   contenu: string
   userId: string
   _count: AvisCountAggregateOutputType | null
@@ -206,6 +217,7 @@ export type AvisWhereInput = {
   NOT?: Prisma.AvisWhereInput | Prisma.AvisWhereInput[]
   id?: Prisma.IntFilter<"Avis"> | number
   date?: Prisma.DateTimeFilter<"Avis"> | Date | string
+  note?: Prisma.IntFilter<"Avis"> | number
   contenu?: Prisma.StringFilter<"Avis"> | string
   userId?: Prisma.StringFilter<"Avis"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -214,6 +226,7 @@ export type AvisWhereInput = {
 export type AvisOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   contenu?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -225,6 +238,7 @@ export type AvisWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AvisWhereInput[]
   NOT?: Prisma.AvisWhereInput | Prisma.AvisWhereInput[]
   date?: Prisma.DateTimeFilter<"Avis"> | Date | string
+  note?: Prisma.IntFilter<"Avis"> | number
   contenu?: Prisma.StringFilter<"Avis"> | string
   userId?: Prisma.StringFilter<"Avis"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -233,6 +247,7 @@ export type AvisWhereUniqueInput = Prisma.AtLeast<{
 export type AvisOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   contenu?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.AvisCountOrderByAggregateInput
@@ -248,12 +263,14 @@ export type AvisScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AvisScalarWhereWithAggregatesInput | Prisma.AvisScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Avis"> | number
   date?: Prisma.DateTimeWithAggregatesFilter<"Avis"> | Date | string
+  note?: Prisma.IntWithAggregatesFilter<"Avis"> | number
   contenu?: Prisma.StringWithAggregatesFilter<"Avis"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Avis"> | string
 }
 
 export type AvisCreateInput = {
   date?: Date | string
+  note?: number
   contenu: string
   user: Prisma.UserCreateNestedOneWithoutAvisInput
 }
@@ -261,12 +278,14 @@ export type AvisCreateInput = {
 export type AvisUncheckedCreateInput = {
   id?: number
   date?: Date | string
+  note?: number
   contenu: string
   userId: string
 }
 
 export type AvisUpdateInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutAvisNestedInput
 }
@@ -274,6 +293,7 @@ export type AvisUpdateInput = {
 export type AvisUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -281,18 +301,21 @@ export type AvisUncheckedUpdateInput = {
 export type AvisCreateManyInput = {
   id?: number
   date?: Date | string
+  note?: number
   contenu: string
   userId: string
 }
 
 export type AvisUpdateManyMutationInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AvisUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -310,17 +333,20 @@ export type AvisOrderByRelationAggregateInput = {
 export type AvisCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   contenu?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type AvisAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  note?: Prisma.SortOrder
 }
 
 export type AvisMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   contenu?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
@@ -328,12 +354,14 @@ export type AvisMaxOrderByAggregateInput = {
 export type AvisMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
+  note?: Prisma.SortOrder
   contenu?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type AvisSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  note?: Prisma.SortOrder
 }
 
 export type AvisCreateNestedManyWithoutUserInput = {
@@ -380,12 +408,14 @@ export type AvisUncheckedUpdateManyWithoutUserNestedInput = {
 
 export type AvisCreateWithoutUserInput = {
   date?: Date | string
+  note?: number
   contenu: string
 }
 
 export type AvisUncheckedCreateWithoutUserInput = {
   id?: number
   date?: Date | string
+  note?: number
   contenu: string
 }
 
@@ -421,6 +451,7 @@ export type AvisScalarWhereInput = {
   NOT?: Prisma.AvisScalarWhereInput | Prisma.AvisScalarWhereInput[]
   id?: Prisma.IntFilter<"Avis"> | number
   date?: Prisma.DateTimeFilter<"Avis"> | Date | string
+  note?: Prisma.IntFilter<"Avis"> | number
   contenu?: Prisma.StringFilter<"Avis"> | string
   userId?: Prisma.StringFilter<"Avis"> | string
 }
@@ -428,23 +459,27 @@ export type AvisScalarWhereInput = {
 export type AvisCreateManyUserInput = {
   id?: number
   date?: Date | string
+  note?: number
   contenu: string
 }
 
 export type AvisUpdateWithoutUserInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AvisUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AvisUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  note?: Prisma.IntFieldUpdateOperationsInput | number
   contenu?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -453,6 +488,7 @@ export type AvisUncheckedUpdateManyWithoutUserInput = {
 export type AvisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   date?: boolean
+  note?: boolean
   contenu?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -461,6 +497,7 @@ export type AvisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type AvisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   date?: boolean
+  note?: boolean
   contenu?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -469,6 +506,7 @@ export type AvisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type AvisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   date?: boolean
+  note?: boolean
   contenu?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -477,11 +515,12 @@ export type AvisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type AvisSelectScalar = {
   id?: boolean
   date?: boolean
+  note?: boolean
   contenu?: boolean
   userId?: boolean
 }
 
-export type AvisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "contenu" | "userId", ExtArgs["result"]["avis"]>
+export type AvisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "note" | "contenu" | "userId", ExtArgs["result"]["avis"]>
 export type AvisInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -500,6 +539,7 @@ export type $AvisPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     date: Date
+    note: number
     contenu: string
     userId: string
   }, ExtArgs["result"]["avis"]>
@@ -928,6 +968,7 @@ export interface Prisma__AvisClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface AvisFieldRefs {
   readonly id: Prisma.FieldRef<"Avis", 'Int'>
   readonly date: Prisma.FieldRef<"Avis", 'DateTime'>
+  readonly note: Prisma.FieldRef<"Avis", 'Int'>
   readonly contenu: Prisma.FieldRef<"Avis", 'String'>
   readonly userId: Prisma.FieldRef<"Avis", 'String'>
 }

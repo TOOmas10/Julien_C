@@ -4,9 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
 }
 
 model Role {
@@ -91,6 +89,7 @@ model DemandeResa {
   prestationId        Int
   prestation          Prestation   @relation(fields: [prestationId], references: [id])
   reservation         Reservation?
+  soiree              Soiree?
 }
 
 model Reservation {
@@ -108,16 +107,19 @@ model Reservation {
 model Avis {
   id      Int      @id @default(autoincrement())
   date    DateTime @default(now())
+  note    Int      @default(5)
   contenu String
   userId  String
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Soiree {
-  id          Int      @id @default(autoincrement())
-  titre       String
-  date        DateTime
-  lieu        String
-  ville       String
-  description String?
+  id            Int          @id @default(autoincrement())
+  titre         String
+  date          DateTime
+  lieu          String
+  ville         String
+  description   String?
+  demandeResaId Int?         @unique
+  demande       DemandeResa? @relation(fields: [demandeResaId], references: [id])
 }
