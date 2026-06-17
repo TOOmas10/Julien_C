@@ -100,7 +100,7 @@ export default async function HeaderAvis() {
             </svg>
           </Link>
           <Link
-            href="https://wa.me/0603553228"
+            href="https://wa.me/33603553228"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-all duration-500 ease-out hover:scale-[1.2]"
