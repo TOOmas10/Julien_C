@@ -37,10 +37,6 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
-  icons: {
-    icon: [{ url: "/logo.png", type: "image/png", sizes: "500x500" }],
-    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
-  },
 };
 
 const poppins = Poppins({
