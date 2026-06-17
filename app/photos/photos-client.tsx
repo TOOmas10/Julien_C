@@ -34,9 +34,9 @@ export default function PhotosClient({
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  async function handleDelete(filename: string) {
+  async function handleDelete(url: string) {
     if (!confirm("Supprimer cette photo ?")) return;
-    await deletePhoto(filename);
+    await deletePhoto(url);
     router.refresh();
   }
 
@@ -98,23 +98,23 @@ export default function PhotosClient({
         </AnimateOnScroll>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-[16px]">
-          {photos.map((filename, i) => (
+          {photos.map((url, i) => (
             <div
-              key={filename}
+              key={url}
               className="group relative rounded-[12px] overflow-hidden border border-[rgba(80,60,200,0.25)] bg-[rgba(10,8,40,0.7)] aspect-[4/3] transition-all duration-300 hover:border-[rgba(100,80,255,0.55)] hover:shadow-[0_0_24px_rgba(60,40,200,0.3)] animate-[fadeUp_0.55s_ease_both]"
               style={{ animationDelay: `${i * 70}ms` }}
             >
               <Image
-                src={`/gallery/${filename}`}
+                src={url}
                 alt="photo"
                 fill
                 className="object-cover cursor-pointer transition-transform duration-500 ease-out group-hover:scale-[1.07]"
-                onClick={() => setLightboxSrc(`/gallery/${filename}`)}
+                onClick={() => setLightboxSrc(url)}
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 220px"
               />
               {isAdmin && (
                 <Button
-                  onClick={() => handleDelete(filename)}
+                  onClick={() => handleDelete(url)}
                   className="absolute top-[8px] right-[8px] bg-[rgba(180,30,60,0.75)] border-none rounded-[6px] text-white text-[11px] font-bold tracking-[0.06em] uppercase px-[10px] py-[5px] cursor-pointer opacity-0 group-hover:opacity-100 transition-[opacity,background] duration-150 hover:bg-[rgba(220,40,70,0.9)] h-auto z-10"
                 >
                   Suppr.

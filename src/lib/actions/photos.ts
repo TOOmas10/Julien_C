@@ -2,17 +2,8 @@
 
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { writeFile, unlink, mkdir } from "fs/promises";
-import { join } from "path";
+import { put, del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
-
-const galleryDir = join(process.cwd(), "public", "gallery");
-
-async function ensureDir() {
-  try {
-    await mkdir(galleryDir, { recursive: true });
-  } catch {}
-}
 
 type UploadState = { error?: string; success?: string } | undefined;
 
@@ -33,25 +24,20 @@ export async function uploadPhoto(
     return { error: "Fichier trop lourd (5 Mo maximum)." };
 
   const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
-  const filename = `photo_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-  const bytes = await file.arrayBuffer();
+  const pathname = `gallery/photo_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
-  await ensureDir();
-  await writeFile(join(galleryDir, filename), Buffer.from(bytes));
+  await put(pathname, file, { access: "public" });
 
   revalidatePath("/photos");
   return { success: "Photo ajoutée avec succès." };
 }
 
-export async function deletePhoto(filename: string) {
+export async function deletePhoto(blobUrl: string) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session || session.user.roleId !== 2) return;
 
-  const safe = filename.replace(/[^a-zA-Z0-9._-]/g, "");
-  if (!safe || safe.includes("..")) return;
-
   try {
-    await unlink(join(galleryDir, safe));
+    await del(blobUrl);
   } catch {}
 
   revalidatePath("/photos");

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { readdir, mkdir } from "fs/promises";
-import { join } from "path";
+import { list } from "@vercel/blob";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Footer from "@/components/footer";
@@ -16,14 +15,11 @@ export default async function PhotosPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   const isAdmin = session?.user.roleId === 2;
 
-  const galleryDir = join(process.cwd(), "public", "gallery");
   let photos: string[] = [];
   try {
-    const files = await readdir(galleryDir);
-    photos = files.filter((f) => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
-  } catch {
-    await mkdir(galleryDir, { recursive: true }).catch(() => {});
-  }
+    const { blobs } = await list({ prefix: "gallery/" });
+    photos = blobs.map((b) => b.url);
+  } catch {}
 
   return (
     <>
