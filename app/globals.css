@@ -4,9 +4,10 @@
 
 @font-face {
   font-family: "Dear";
-  src: url("/fonts/dearscript.otf") format("opentype");
+  src: url("/fonts/dearscript.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @custom-variant dark (&:is(.dark *));
