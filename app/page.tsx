@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import AuthErrorBanner from "@/components/auth-error-banner";
 import AnimateOnScroll from "@/components/animate-on-scroll";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: { absolute: "Julien C — DJ Événementiel" },
@@ -32,8 +33,19 @@ export default async function HomePage({
       {/* Hero */}
       <section
         id="hero"
-        className="relative bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.35)_50%,#000_100%),url('/3.png')] bg-cover bg-center h-screen flex justify-center items-center flex-col overflow-hidden before:content-[''] before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_50%_60%,var(--primary-glow)_0%,transparent_55%)] before:opacity-40 before:pointer-events-none"
+        className="relative h-screen flex justify-center items-center flex-col overflow-hidden"
       >
+        <Image
+          src="/3.png"
+          alt=""
+          fill
+          priority
+          quality={85}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.35)_50%,#000_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,var(--primary-glow)_0%,transparent_55%)] opacity-40 pointer-events-none" />
         <p className="relative top-5 flex gap-[18px] items-center text-[0.95rem] uppercase text-[var(--text-muted)] tracking-[3px] select-none m-0 z-[1] animate-[fadeUp_1s_ease_0.3s_both]">
           <span>DJ</span>
           <span className="text-[var(--primary-color)] text-[1.2rem] animate-[glowPulse_3s_ease-in-out_infinite]">
