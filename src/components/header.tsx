@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import UserMenu from "./user-menu";
+import AuthSlot from "./auth-slot";
 import MobileNav from "./mobile-nav";
 
 const navLinkClass =
@@ -15,27 +13,11 @@ const homeLinks = [
   { href: "/photos", label: "Photos" },
 ];
 
-export default async function Header() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const user = session?.user;
-
+export default function Header() {
   return (
     <nav className="fixed top-0 left-0 z-[100] w-screen flex font-[Optima] justify-between items-center px-[16px] md:px-[50px] py-[6px] animate-[fadeDown_0.7s_ease_both]">
       {/* Left: user / login */}
-      {user ? (
-        <UserMenu
-          prenom={user.prenom ?? user.name.split(" ")[0]}
-          isAdmin={user.roleId === 2}
-        />
-      ) : (
-        <Link
-          href="/login"
-          className="px-[14px] md:px-[22px] py-[8px] md:py-[10px] border border-purple-700/50 rounded-lg text-purple-200/90 text-[0.8rem] md:text-[0.85rem] font-bold tracking-[0.08em] uppercase no-underline transition-all duration-200 whitespace-nowrap hover:bg-[rgba(60,40,180,0.25)] hover:border-purple-500/70 hover:text-white"
-        >
-          <span className="hidden sm:inline">Connexion / Inscription</span>
-          <span className="sm:hidden">Connexion</span>
-        </Link>
-      )}
+      <AuthSlot />
 
       {/* Center: nav links (desktop only) */}
       <div className="hidden md:flex gap-9 items-center text-[0.95rem] uppercase tracking-[1px]">

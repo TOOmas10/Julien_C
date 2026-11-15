@@ -1,14 +1,19 @@
-import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import AnimateOnScroll from "@/components/animate-on-scroll";
 import { prisma } from "@/lib/prisma";
 import Footer from "@/components/footer";
 import HeaderAvis from "@/components/header-avis";
 import AdminTable from "./admin-table";
 
+export const metadata: Metadata = {
+  title: "Administration",
+  robots: { index: false, follow: false },
+};
+
 export default async function AdminPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session || session.user.roleId !== 2) redirect("/");
 
   const reservations = await prisma.reservation.findMany({

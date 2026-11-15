@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -61,7 +62,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex justify-center items-center min-h-screen bg-[linear-gradient(160deg,#0a0a14_0%,#0d0a2e_50%,#0a0a14_100%)] px-4">
+    <main className="flex flex-col gap-[16px] justify-center items-center min-h-screen bg-[linear-gradient(160deg,#0a0a14_0%,#0d0a2e_50%,#0a0a14_100%)] px-4 py-[24px]">
+      <h1 className="sr-only">Connexion ou inscription</h1>
       <div className="w-full max-w-[340px] h-[520px] rounded-[18px] overflow-hidden relative border border-[rgba(80,60,200,0.4)] shadow-[0_0_60px_rgba(40,20,180,0.2),0_0_0_1px_rgba(100,80,255,0.08)] bg-[rgba(10,8,40,0.95)] animate-[scaleIn_0.45s_ease_both]">
         <input type="checkbox" id="chk" className="peer hidden" />
 
@@ -125,6 +127,16 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+
+      {/* Information RGPD (art. 13) au moment de la collecte */}
+      <p className="w-full max-w-[340px] text-center text-[11px] leading-relaxed text-[rgba(160,140,220,0.6)] m-0">
+        Vos informations servent uniquement à gérer votre compte et vos demandes de réservation.
+        Elles ne sont jamais revendues. Vous pouvez les consulter, les modifier ou supprimer votre
+        compte à tout moment depuis « Mon profil ».{" "}
+        <Link href="/politique-de-confidentialite" className="underline hover:text-white">
+          Politique de confidentialité
+        </Link>
+      </p>
     </main>
   );
 }

@@ -1,34 +1,49 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import AuthErrorBanner from "@/components/auth-error-banner";
 import AnimateOnScroll from "@/components/animate-on-scroll";
+import JsonLd from "@/components/json-ld";
 import Link from "next/link";
 import Image from "next/image";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: { absolute: "Julien C — DJ Événementiel" },
-  description:
-    "DJ Julien C, spécialiste des soirées événementielles : mariages, anniversaires, soirées privées. Réservez votre date en ligne.",
+  title: { absolute: SITE.title },
+  description: SITE.description,
+  alternates: { canonical: "/" },
+};
+
+// Données structurées : aident Google à comprendre qu'il s'agit d'une
+// activité de DJ (fiche entreprise, liens vers les réseaux sociaux).
+const businessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "EntertainmentBusiness",
+  "@id": `${SITE.url}/#business`,
+  name: SITE.title,
+  description: SITE.description,
+  url: SITE.url,
+  image: `${SITE.url}/og-image.jpg`,
+  logo: `${SITE.url}/icon.png`,
+  email: SITE.email,
+  telephone: SITE.phoneE164,
+  areaServed: SITE.areaServed,
+  sameAs: [SITE.instagram],
 };
 
 const pClass = "text-[1.1rem] leading-[1.8] text-[#cfcfcf] m-0 mb-[20px]";
 const tagClass =
   "border border-white/[0.08] px-[16px] py-[8px] rounded-full text-[0.8rem] uppercase tracking-[1px] text-[#ddd] transition-all duration-300 cursor-default hover:border-[var(--primary-color)] hover:text-[var(--primary-color)]";
 
-type SearchParams = Promise<{ auth_error?: string }>;
-
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const { auth_error } = await searchParams;
-
+export default function HomePage() {
   return (
     <>
+      <JsonLd data={businessJsonLd} />
       <Header />
-      {auth_error && <AuthErrorBanner />}
+      <Suspense fallback={null}>
+        <AuthErrorBanner />
+      </Suspense>
 
       {/* Hero */}
       <section

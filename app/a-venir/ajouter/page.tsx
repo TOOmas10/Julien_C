@@ -1,12 +1,17 @@
-import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { addSoiree } from "@/lib/actions/soirees";
 import Form from "next/form";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "Ajouter une soirée",
+  robots: { index: false, follow: false },
+};
 
 const inputClass =
   "appearance-none w-[78%] bg-[rgba(255,255,255,0.05)] border border-[rgba(80,60,200,0.35)] rounded-lg text-[rgba(220,215,255,0.9)] text-[13px] py-[9px] px-[14px] outline-none flex mx-auto my-[6px] transition-[border-color] duration-[150ms] placeholder:text-[rgba(140,120,200,0.45)] focus:border-[rgba(120,100,255,0.6)]";
@@ -16,7 +21,7 @@ const labelClass =
   "text-white text-[1.1em] font-black tracking-[0.15em] uppercase flex justify-center pt-[22px] pb-[14px] m-0";
 
 export default async function AjouterSoireePage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session || session.user.roleId !== 2) redirect("/");
 
   return (

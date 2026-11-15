@@ -17,11 +17,13 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
-      "connect-src 'self' https://accelerate.prisma-data.net https://*.public.blob.vercel-storage.com",
+      // googletagmanager / google-analytics : Google Analytics, chargé
+      // uniquement après consentement (et seulement si NEXT_PUBLIC_GA_ID est défini)
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self'",
+      "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://*.googletagmanager.com",
+      "connect-src 'self' https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       "frame-ancestors 'none'",
     ].join("; "),
   },

@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function addSoiree(formData: FormData) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -42,6 +43,7 @@ export async function addSoiree(formData: FormData) {
     data: { titre, date: dateTime, lieu, ville, description, demandeResaId: demande.id },
   });
 
+  revalidatePath("/a-venir");
   redirect("/a-venir");
 }
 
@@ -58,4 +60,6 @@ export async function deleteSoiree(id: number) {
   if (soiree?.demandeResaId) {
     await prisma.demandeResa.delete({ where: { id: soiree.demandeResaId } });
   }
+
+  revalidatePath("/a-venir");
 }

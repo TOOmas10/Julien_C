@@ -5,6 +5,7 @@ import { deleteSoiree } from "@/lib/actions/soirees";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import AnimateOnScroll from "@/components/animate-on-scroll";
+import { authClient } from "@/lib/auth-client";
 
 type Soiree = {
   id: number;
@@ -15,14 +16,12 @@ type Soiree = {
   description: string | null;
 };
 
-export default function SoireeList({
-  soirees,
-  isAdmin,
-}: {
-  soirees: Soiree[];
-  isAdmin: boolean;
-}) {
+export default function SoireeList({ soirees }: { soirees: Soiree[] }) {
   const router = useRouter();
+  // Session lue côté navigateur : la page reste statique pour tout le monde,
+  // les boutons admin apparaissent seulement pour l'admin.
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roleId === 2;
 
   async function handleDelete(id: number) {
     if (!confirm("Supprimer définitivement cette soirée ?")) return;
@@ -39,9 +38,9 @@ export default function SoireeList({
             <div className="text-[11px] font-bold tracking-[0.25em] uppercase text-[rgba(120,100,255,0.7)] mb-[8px]">
               — Agenda
             </div>
-            <h2 className="text-[22px] font-black text-white tracking-[0.06em] uppercase m-0">
+            <h1 className="text-[22px] font-black text-white tracking-[0.06em] uppercase m-0">
               Soirées à venir
-            </h2>
+            </h1>
           </div>
           {isAdmin && (
             <Link
@@ -60,7 +59,7 @@ export default function SoireeList({
         </p>
       ) : (
         soirees.map((s, i) => (
-          <AnimateOnScroll key={s.id} delay={i * 70}>
+          <AnimateOnScroll key={s.id} delay={Math.min(i, 6) * 70}>
             <div className="bg-[rgba(10,8,40,0.85)] border border-[rgba(80,60,200,0.25)] border-l-[3px] border-l-[rgba(100,80,255,0.55)] rounded-[14px] px-[24px] py-[22px] mb-[14px] transition-[border-color] duration-200 hover:border-[rgba(100,80,255,0.45)]">
               <div className="flex justify-between items-center mb-[10px] pb-[10px] border-b border-[rgba(80,60,200,0.15)]">
                 <strong className="text-[14px] font-bold text-white">{s.titre}</strong>

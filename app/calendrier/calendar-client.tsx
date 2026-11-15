@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { createReservation } from "@/lib/actions/reservations";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -62,12 +62,17 @@ const btnPrimary =
 const btnSecondary =
   "flex-1 py-[12px] bg-transparent border border-[rgba(80,60,200,0.35)] rounded-[8px] text-[rgba(160,140,255,0.8)] text-[13px] font-semibold tracking-[0.08em] uppercase cursor-pointer transition-all duration-[150ms] hover:border-[rgba(120,100,255,0.6)] hover:text-white";
 
-export default function CalendarClient() {
+export default function CalendarClient({
+  initialReservedDates,
+  prestations,
+}: {
+  initialReservedDates: string[];
+  prestations: Prestation[];
+}) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth() + 1);
-  const [reservedDates, setReservedDates] = useState<string[]>([]);
-  const [prestations, setPrestations] = useState<Prestation[]>([]);
+  const [reservedDates, setReservedDates] = useState<string[]>(initialReservedDates);
   const [dialog, setDialog] = useState<{ open: boolean; date: string }>({ open: false, date: "" });
   const [formInfo, setFormInfo] = useState("");
   const [formPrestation, setFormPrestation] = useState("");
@@ -82,14 +87,6 @@ export default function CalendarClient() {
       // silent fail
     }
   }, []);
-
-  useEffect(() => {
-    fetchReservations();
-    fetch("/api/calendar/prestations")
-      .then((r) => r.json())
-      .then((data: Prestation[]) => setPrestations(data))
-      .catch(() => {});
-  }, [fetchReservations]);
 
   function prevMonth() {
     if (year <= STARTING_YEAR && month <= 1) return;

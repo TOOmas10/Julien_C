@@ -6,15 +6,12 @@ import { uploadPhoto, deletePhoto } from "@/lib/actions/photos";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import AnimateOnScroll from "@/components/animate-on-scroll";
+import { authClient } from "@/lib/auth-client";
 
-export default function PhotosClient({
-  photos,
-  isAdmin,
-}: {
-  photos: string[];
-  isAdmin: boolean;
-}) {
+export default function PhotosClient({ photos }: { photos: string[] }) {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roleId === 2;
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
   const [state, formAction, pending] = useActionState(uploadPhoto, undefined);
@@ -48,9 +45,9 @@ export default function PhotosClient({
           <div className="text-[11px] font-bold tracking-[0.25em] uppercase text-[rgba(120,100,255,0.7)] mb-[8px]">
             — Galerie
           </div>
-          <h2 className="text-[22px] font-black text-white tracking-[0.06em] uppercase m-0">
+          <h1 className="text-[22px] font-black text-white tracking-[0.06em] uppercase m-0">
             Photos
-          </h2>
+          </h1>
         </div>
       </AnimateOnScroll>
 
@@ -102,11 +99,11 @@ export default function PhotosClient({
             <div
               key={url}
               className="group relative rounded-[12px] overflow-hidden border border-[rgba(80,60,200,0.25)] bg-[rgba(10,8,40,0.7)] aspect-[4/3] transition-all duration-300 hover:border-[rgba(100,80,255,0.55)] hover:shadow-[0_0_24px_rgba(60,40,200,0.3)] animate-[fadeUp_0.55s_ease_both]"
-              style={{ animationDelay: `${i * 70}ms` }}
+              style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}
             >
               <Image
                 src={url}
-                alt="photo"
+                alt={`Soirée animée par DJ Julien C — photo ${i + 1}`}
                 fill
                 className="object-cover cursor-pointer transition-transform duration-500 ease-out group-hover:scale-[1.07]"
                 onClick={() => setLightboxSrc(url)}

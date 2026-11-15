@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function signup(formData: FormData) {
   const email = formData.get("email") as string;
@@ -26,10 +27,12 @@ export async function signup(formData: FormData) {
   redirect("/");
 }
 
+type ProfileState = { error?: string; success?: boolean } | undefined;
+
 export async function updateProfile(
-  _prevState: { error: string } | undefined,
+  _prevState: ProfileState,
   formData: FormData
-): Promise<{ error: string } | undefined> {
+): Promise<ProfileState> {
   const h = await headers();
   const session = await auth.api.getSession({ headers: h });
   if (!session) redirect("/login");
@@ -70,5 +73,10 @@ export async function updateProfile(
     }
   }
 
-  redirect("/");
+  // Rafraîchit le cookie de session (cache 5 min) avec les nouvelles infos,
+  // et régénère la page des avis qui affiche prénom + initiale.
+  await auth.api.getSession({ headers: h, query: { disableCookieCache: true } });
+  revalidatePath("/avis");
+
+  return { success: true };
 }

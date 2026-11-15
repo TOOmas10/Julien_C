@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrestations } from "@/lib/calendar-data";
 
 export async function GET() {
-  const prestations = await prisma.prestation.findMany({
-    select: { id: true, type: true },
-  });
-  return NextResponse.json(prestations);
+  return NextResponse.json(await getPrestations());
 }

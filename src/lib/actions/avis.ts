@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function submitAvis(formData: FormData) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -17,6 +18,7 @@ export async function submitAvis(formData: FormData) {
     data: { contenu, note, userId: session.user.id },
   });
 
+  revalidatePath("/avis");
   redirect("/avis");
 }
 
@@ -27,4 +29,6 @@ export async function deleteAvis(avisId: number) {
   await prisma.avis.deleteMany({
     where: { id: avisId, userId: session.user.id },
   });
+
+  revalidatePath("/avis");
 }

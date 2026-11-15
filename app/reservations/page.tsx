@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import AnimateOnScroll from "@/components/animate-on-scroll";
 
 export const metadata: Metadata = {
@@ -14,7 +13,7 @@ import ResaList from "./resa-list";
 import HeaderAvis from "@/components/header-avis";
 
 export default async function ReservationsPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) redirect("/?auth_error=1");
   const user = session.user;
 

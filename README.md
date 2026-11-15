@@ -136,7 +136,15 @@ NEXT_PUBLIC_APP_URL="https://votre-domaine.vercel.app"
 RESEND_API_KEY="re_..."
 RESEND_FROM="onboarding@resend.dev"   # remplacer par contact@votre-domaine.fr si domaine vérifié
 DJ_EMAIL="votre@email.com"            # email où le DJ reçoit les notifications
+
+# Mesure d'audience Google Analytics 4 (optionnel)
+# Chargé uniquement après acceptation dans la bannière cookies.
+NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
 ```
+
+> **Informations légales** : les mentions légales et la politique de confidentialité
+> lisent leurs informations dans `src/lib/site.ts`. Les champs « À COMPLÉTER »
+> (nom complet, SIRET, adresse, médiateur…) doivent être remplis avant la mise en ligne.
 
 ---
 

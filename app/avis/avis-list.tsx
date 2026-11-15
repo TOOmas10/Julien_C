@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { deleteAvis } from "@/lib/actions/avis";
 import { Button } from "@/components/ui/button";
 import AnimateOnScroll from "@/components/animate-on-scroll";
+import { authClient } from "@/lib/auth-client";
 
 type AvisItem = {
   id: number;
@@ -34,14 +35,10 @@ function Stars({ note }: { note: number }) {
   );
 }
 
-export default function AvisList({
-  avis,
-  currentUserId,
-}: {
-  avis: AvisItem[];
-  currentUserId: string | null;
-}) {
+export default function AvisList({ avis }: { avis: AvisItem[] }) {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const currentUserId = session?.user.id ?? null;
 
   async function handleDelete(id: number) {
     if (!confirm("Supprimer cet avis ?")) return;
@@ -60,7 +57,7 @@ export default function AvisList({
   return (
     <section className="flex flex-col gap-[16px]">
       {avis.map((a, i) => (
-        <AnimateOnScroll key={a.id} delay={i * 60}>
+        <AnimateOnScroll key={a.id} delay={Math.min(i, 6) * 60}>
           <div className="bg-[rgba(10,8,40,0.8)] border border-[rgba(80,60,200,0.25)] rounded-[14px] px-[24px] py-[22px] transition-[border-color] duration-200 hover:border-[rgba(100,80,255,0.45)]">
             <div className="flex justify-between items-center mb-[12px]">
               <strong className="text-[14px] font-bold text-white tracking-[0.04em]">
