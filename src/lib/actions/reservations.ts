@@ -197,13 +197,13 @@ export async function updateReservationEtat(demandeResaId: number, etatId: numbe
     where: { demandeResaId },
     include: {
       user: true,
-      demande: { include: { prestation: true } },
+      demande: { include: { prestation: true, soiree: { select: { id: true } } } },
       etat: true,
     },
   });
 
-  // Pas d'email pour les réservations de l'admin lui-même (soirées)
-  if (resa && resa.user.roleId !== 2) {
+  // Pas d'email pour les réservations techniques créées par une soirée
+  if (resa && !resa.demande.soiree) {
     sendLater(() =>
       sendResaStatusUser({
         to: resa.user.email,
@@ -223,13 +223,17 @@ export async function deleteReservationAdmin(demandeResaId: number) {
   // Lu avant suppression pour pouvoir prévenir le client
   const resa = await prisma.reservation.findUnique({
     where: { demandeResaId },
-    include: { user: true, demande: { include: { prestation: true } } },
+    include: {
+      user: true,
+      demande: { include: { prestation: true, soiree: { select: { id: true } } } },
+    },
   });
 
   await prisma.reservation.delete({ where: { demandeResaId } });
   await prisma.demandeResa.delete({ where: { id: demandeResaId } });
 
-  if (resa && resa.user.roleId !== 2) {
+  // Pas d'email pour les réservations techniques créées par une soirée
+  if (resa && !resa.demande.soiree) {
     sendLater(() =>
       sendResaDeletedUser({
         to: resa.user.email,
