@@ -108,8 +108,11 @@ function recap(fields: { label: string; value: string }[]): string {
 }
 
 async function send(payload: Parameters<ReturnType<typeof getResend>["emails"]["send"]>[0]) {
+  // Par défaut, « Répondre » envoie la réponse à Julien (l'adresse
+  // d'expédition peut être une adresse sans boîte de réception).
+  const replyTo = payload.replyTo ?? (DJ_EMAIL() || undefined);
   try {
-    const result = await getResend().emails.send(payload);
+    const result = await getResend().emails.send({ ...payload, ...(replyTo ? { replyTo } : {}) });
     if (result.error) console.error("[email] Resend error:", result.error);
   } catch (err) {
     console.error("[email] Failed to send email:", err);
@@ -172,6 +175,7 @@ export async function sendResaNotificationDJ({
     from: FROM(),
     to: djEmail,
     subject: `Nouvelle réservation — ${esc(prenom)} ${esc(nom)}`,
+    replyTo: email,
     html: template(
       "Nouvelle réservation",
       `<p>Une nouvelle demande a été reçue.</p>
@@ -269,8 +273,11 @@ export async function sendResaUpdatedUser({
       "Réservation modifiée",
       `<p>Bonjour <strong style="color:#fff;">${esc(prenom)}</strong>,</p>
       <p>Voici le récapitulatif des modifications apportées à votre réservation :</p>
-      ${recap(changes)}
-      <p style="color:rgba(140,120,200,0.6);font-size:12px;margin-top:16px;">En attente de confirmation de Julien.</p>`
+      ${recap([
+        ...changes,
+        { label: "Statut", value: `<span style="color:#fbbf24;font-weight:700;">En attente</span>` },
+      ])}
+      <p>Votre réservation est repassée <strong style="color:#fbbf24;">en attente</strong> : Julien doit confirmer ces nouvelles informations. Vous recevrez un email dès sa réponse.</p>`
     ),
   });
 }
@@ -280,13 +287,13 @@ export async function sendResaUpdatedDJ({
   client,
   before,
   after,
-  statut,
+  previousStatut,
 }: {
   client: Client;
   before: ResaSnapshot;
   after: ResaSnapshot;
-  /** Statut actuel de la réservation (inchangé par la modification). */
-  statut: string;
+  /** Statut avant la modification (la réservation repasse ensuite « En attente »). */
+  previousStatut: string;
 }) {
   const djEmail = DJ_EMAIL();
   if (!djEmail) return;
@@ -297,10 +304,20 @@ export async function sendResaUpdatedDJ({
     from: FROM(),
     to: djEmail,
     subject: `Réservation modifiée — ${esc(client.prenom)} ${esc(client.nom)}`,
+    replyTo: client.email,
     html: template(
       "Réservation modifiée",
-      `<p>Un client a modifié sa demande de réservation.</p>
-      ${recap([...clientRows(client), { label: "Statut actuel", value: esc(statut) }])}
+      `<p>Un client a modifié sa demande de réservation. Elle est repassée <strong style="color:#fbbf24;">en attente</strong> : pensez à la valider ou la refuser depuis l'interface admin.</p>
+      ${recap([
+        ...clientRows(client),
+        {
+          label: "Statut",
+          value:
+            previousStatut === "En attente"
+              ? `<span style="color:#fbbf24;font-weight:700;">En attente</span>`
+              : `${esc(previousStatut)} → <span style="color:#fbbf24;font-weight:700;">En attente</span>`,
+        },
+      ])}
       <p style="margin:8px 0 0;">Modifications :</p>
       ${recap(changes)}`
     ),
@@ -322,6 +339,7 @@ export async function sendResaCancelledDJ({
     from: FROM(),
     to: djEmail,
     subject: `Réservation annulée — ${esc(client.prenom)} ${esc(client.nom)}`,
+    replyTo: client.email,
     html: template(
       "Réservation annulée",
       `<p>Un client a <strong style="color:#ff6478;">annulé</strong> sa demande de réservation. La date est de nouveau disponible dans le calendrier.</p>
@@ -372,6 +390,41 @@ export async function sendAccountDeleted({ to, prenom }: { to: string; prenom: s
       `<p>Bonjour <strong style="color:#fff;">${esc(prenom)}</strong>,</p>
       <p>Votre compte a bien été supprimé, ainsi que vos réservations et vos avis. Aucune donnée personnelle vous concernant n'est conservée sur le site.</p>
       <p style="color:rgba(140,120,200,0.6);font-size:12px;margin-top:24px;">Si vous n'êtes pas à l'origine de cette suppression, répondez à cet email ou contactez Julien à julien.dj2a@gmail.com.</p>`
+    ),
+  });
+}
+
+// 10. Suppression d'un compte qui avait des réservations → DJ
+export async function sendAccountDeletedDJ({
+  client,
+  reservations,
+}: {
+  client: Client;
+  reservations: (ResaSnapshot & { statut: string })[];
+}) {
+  const djEmail = DJ_EMAIL();
+  if (!djEmail || reservations.length === 0) return;
+
+  const plural = reservations.length > 1;
+  await send({
+    from: FROM(),
+    to: djEmail,
+    replyTo: client.email,
+    subject: `Compte supprimé — ${plural ? `${reservations.length} réservations annulées` : "1 réservation annulée"} (${esc(client.prenom)} ${esc(client.nom)})`,
+    html: template(
+      "Compte client supprimé",
+      `<p>Un client a supprimé son compte. ${plural ? "Ses réservations ont été supprimées" : "Sa réservation a été supprimée"} et ${plural ? "les dates sont" : "la date est"} de nouveau ${plural ? "disponibles" : "disponible"} dans le calendrier.</p>
+      ${recap(clientRows(client))}
+      ${reservations
+        .map((r) =>
+          recap([
+            { label: "Prestation", value: esc(r.prestation) },
+            { label: "Date", value: esc(r.date) },
+            { label: "Statut", value: esc(r.statut) },
+            ...(r.info ? [{ label: "Infos", value: esc(r.info) }] : []),
+          ])
+        )
+        .join("")}`
     ),
   });
 }

@@ -4,7 +4,20 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { revalidatePath } from "next/cache";
 import { prisma } from "./prisma";
-import { sendAccountDeleted, sendLater, sendWelcome } from "./email";
+import {
+  formatResaDate,
+  sendAccountDeleted,
+  sendAccountDeletedDJ,
+  sendLater,
+  sendWelcome,
+} from "./email";
+
+/**
+ * Réservations d'un compte en cours de suppression, lues dans beforeDelete
+ * (avant leur effacement) et envoyées à Julien dans afterDelete, c'est-à-dire
+ * seulement si la suppression a réellement abouti.
+ */
+const deletionReports = new Map<string, Parameters<typeof sendAccountDeletedDJ>[0]>();
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -43,7 +56,7 @@ export const auth = betterAuth({
       beforeDelete: async (user) => {
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
-          select: { roleId: true },
+          select: { roleId: true, prenom: true, nom: true, name: true, email: true, tel: true },
         });
         if (dbUser?.roleId === 2) {
           throw new APIError("BAD_REQUEST", {
@@ -55,8 +68,33 @@ export const auth = betterAuth({
         // en cascade) pour ne garder aucune donnée et libérer les dates.
         const resas = await prisma.reservation.findMany({
           where: { userId: user.id },
-          select: { demandeResaId: true },
+          select: {
+            demandeResaId: true,
+            etat: { select: { statut: true } },
+            demande: {
+              select: { date: true, infoComplementaires: true, prestation: { select: { type: true } } },
+            },
+          },
+          orderBy: { demande: { date: "asc" } },
         });
+
+        if (dbUser && resas.length > 0) {
+          deletionReports.set(user.id, {
+            client: {
+              prenom: dbUser.prenom ?? dbUser.name.split(" ")[0] ?? "",
+              nom: dbUser.nom ?? dbUser.name.split(" ").slice(1).join(" "),
+              email: dbUser.email,
+              tel: dbUser.tel,
+            },
+            reservations: resas.map((r) => ({
+              date: formatResaDate(r.demande.date),
+              prestation: r.demande.prestation.type,
+              statut: r.etat.statut,
+              info: r.demande.infoComplementaires,
+            })),
+          });
+        }
+
         await prisma.demandeResa.deleteMany({
           where: {
             id: { in: resas.map((r) => r.demandeResaId) },
@@ -74,6 +112,10 @@ export const auth = betterAuth({
             prenom: (user as { prenom?: string | null }).prenom ?? user.name.split(" ")[0],
           })
         );
+        // Julien est prévenu si des réservations ont disparu avec le compte
+        const report = deletionReports.get(user.id);
+        deletionReports.delete(user.id);
+        if (report) sendLater(() => sendAccountDeletedDJ(report));
       },
     },
     additionalFields: {

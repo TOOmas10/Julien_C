@@ -100,10 +100,24 @@ export async function updateReservation(id: number, formData: FormData) {
   const newInfo = (formData.get("infoComplementaires") as string) || null;
   const newPrestationId = parseInt(formData.get("prestationId") as string);
 
+  // Rien n'a changé : on ne touche ni au statut ni aux emails
+  const changed =
+    !before ||
+    before.date.getTime() !== newDate.getTime() ||
+    before.prestationId !== newPrestationId ||
+    (before.infoComplementaires ?? null) !== newInfo;
+  if (!changed) redirect("/reservations");
+
   const updated = await prisma.demandeResa.update({
     where: { id },
     data: { date: newDate, infoComplementaires: newInfo, prestationId: newPrestationId },
     include: { prestation: true },
+  });
+
+  // Toute modification doit être reconfirmée par Julien → « En attente » (3)
+  await prisma.reservation.update({
+    where: { demandeResaId: id },
+    data: { etatId: 3 },
   });
 
   if (before) {
@@ -131,7 +145,7 @@ export async function updateReservation(id: number, formData: FormData) {
           client: clientOf(u),
           before: beforeSnap,
           after: afterSnap,
-          statut: reservation.etat.statut,
+          previousStatut: reservation.etat.statut,
         }),
       ])
     );
