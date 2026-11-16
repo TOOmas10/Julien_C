@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { after } from "next/server";
 
 function esc(str: string): string {
   return str
@@ -15,6 +16,52 @@ function getResend() {
 
 const FROM = () => process.env.RESEND_FROM ?? "onboarding@resend.dev";
 const DJ_EMAIL = () => process.env.DJ_EMAIL ?? "";
+
+/**
+ * Planifie un envoi après la réponse HTTP : l'utilisateur n'attend pas,
+ * et Vercel garde la fonction active jusqu'à la fin de l'envoi (waitUntil).
+ * Hors contexte de requête (scripts…), l'envoi part directement.
+ */
+export function sendLater(task: () => Promise<unknown>) {
+  try {
+    after(task);
+  } catch {
+    task().catch((err) => console.error("[email] error:", err));
+  }
+}
+
+/** Date de réservation lisible, ex. « samedi 20 juin 2026 ». */
+export function formatResaDate(d: Date): string {
+  return d.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+type Client = { prenom: string; nom: string; email: string; tel?: string | null };
+type ResaSnapshot = { date: string; prestation: string; info?: string | null };
+
+function clientRows(c: Client) {
+  return [
+    { label: "Client", value: `${esc(c.prenom)} ${esc(c.nom)}` },
+    { label: "Email", value: esc(c.email) },
+    ...(c.tel ? [{ label: "Téléphone", value: esc(c.tel) }] : []),
+  ];
+}
+
+function diffResa(before: ResaSnapshot, after: ResaSnapshot) {
+  const changes: { label: string; value: string }[] = [];
+  if (before.date !== after.date)
+    changes.push({ label: "Date", value: `${esc(before.date)} → <strong style="color:#fff;">${esc(after.date)}</strong>` });
+  if (before.prestation !== after.prestation)
+    changes.push({ label: "Prestation", value: `${esc(before.prestation)} → <strong style="color:#fff;">${esc(after.prestation)}</strong>` });
+  if ((before.info ?? "") !== (after.info ?? ""))
+    changes.push({ label: "Infos", value: `${esc(before.info || "—")} → <strong style="color:#fff;">${esc(after.info || "—")}</strong>` });
+  return changes;
+}
 
 function template(title: string, body: string): string {
   return `<!DOCTYPE html>
@@ -155,10 +202,13 @@ export async function sendResaStatusUser({
   prestation: string;
 }) {
   const isValidee = statut === "Validée";
-  const color = isValidee ? "#4ade80" : "#ff6478";
+  const isAttente = statut === "En attente";
+  const color = isValidee ? "#4ade80" : isAttente ? "#fbbf24" : "#ff6478";
   const message = isValidee
     ? `Votre réservation a été <strong style="color:#4ade80;">confirmée</strong>. À très bientôt !`
-    : `Votre réservation a été <strong style="color:#ff6478;">refusée</strong>. N'hésitez pas à contacter Julien pour plus d'informations.`;
+    : isAttente
+      ? `Votre réservation est de nouveau <strong style="color:#fbbf24;">en attente</strong> de confirmation. Julien reviendra vers vous rapidement.`
+      : `Votre réservation a été <strong style="color:#ff6478;">refusée</strong>. N'hésitez pas à contacter Julien pour plus d'informations.`;
 
   await send({
     from: FROM(),
@@ -208,15 +258,7 @@ export async function sendResaUpdatedUser({
   before: { date: string; prestation: string; info?: string | null };
   after: { date: string; prestation: string; info?: string | null };
 }) {
-  const changes: { label: string; value: string }[] = [];
-
-  if (before.date !== after.date)
-    changes.push({ label: "Date", value: `${esc(before.date)} → <strong style="color:#fff;">${esc(after.date)}</strong>` });
-  if (before.prestation !== after.prestation)
-    changes.push({ label: "Prestation", value: `${esc(before.prestation)} → <strong style="color:#fff;">${esc(after.prestation)}</strong>` });
-  if ((before.info ?? "") !== (after.info ?? ""))
-    changes.push({ label: "Infos", value: `${esc(before.info || "—")} → <strong style="color:#fff;">${esc(after.info || "—")}</strong>` });
-
+  const changes = diffResa(before, after);
   if (changes.length === 0) return;
 
   await send({
@@ -229,6 +271,107 @@ export async function sendResaUpdatedUser({
       <p>Voici le récapitulatif des modifications apportées à votre réservation :</p>
       ${recap(changes)}
       <p style="color:rgba(140,120,200,0.6);font-size:12px;margin-top:16px;">En attente de confirmation de Julien.</p>`
+    ),
+  });
+}
+
+// 6. Modification de réservation par le client → DJ
+export async function sendResaUpdatedDJ({
+  client,
+  before,
+  after,
+  statut,
+}: {
+  client: Client;
+  before: ResaSnapshot;
+  after: ResaSnapshot;
+  /** Statut actuel de la réservation (inchangé par la modification). */
+  statut: string;
+}) {
+  const djEmail = DJ_EMAIL();
+  if (!djEmail) return;
+  const changes = diffResa(before, after);
+  if (changes.length === 0) return;
+
+  await send({
+    from: FROM(),
+    to: djEmail,
+    subject: `Réservation modifiée — ${esc(client.prenom)} ${esc(client.nom)}`,
+    html: template(
+      "Réservation modifiée",
+      `<p>Un client a modifié sa demande de réservation.</p>
+      ${recap([...clientRows(client), { label: "Statut actuel", value: esc(statut) }])}
+      <p style="margin:8px 0 0;">Modifications :</p>
+      ${recap(changes)}`
+    ),
+  });
+}
+
+// 7. Annulation de réservation par le client → DJ
+export async function sendResaCancelledDJ({
+  client,
+  resa,
+}: {
+  client: Client;
+  resa: ResaSnapshot;
+}) {
+  const djEmail = DJ_EMAIL();
+  if (!djEmail) return;
+
+  await send({
+    from: FROM(),
+    to: djEmail,
+    subject: `Réservation annulée — ${esc(client.prenom)} ${esc(client.nom)}`,
+    html: template(
+      "Réservation annulée",
+      `<p>Un client a <strong style="color:#ff6478;">annulé</strong> sa demande de réservation. La date est de nouveau disponible dans le calendrier.</p>
+      ${recap([
+        ...clientRows(client),
+        { label: "Prestation", value: esc(resa.prestation) },
+        { label: "Date", value: esc(resa.date) },
+        ...(resa.info ? [{ label: "Infos", value: esc(resa.info) }] : []),
+      ])}`
+    ),
+  });
+}
+
+// 8. Suppression d'une réservation par l'admin → utilisateur
+export async function sendResaDeletedUser({
+  to,
+  prenom,
+  resa,
+}: {
+  to: string;
+  prenom: string;
+  resa: ResaSnapshot;
+}) {
+  await send({
+    from: FROM(),
+    to,
+    subject: "Réservation annulée — Julien C DJ",
+    html: template(
+      "Réservation annulée",
+      `<p>Bonjour <strong style="color:#fff;">${esc(prenom)}</strong>,</p>
+      <p>Votre réservation a été <strong style="color:#ff6478;">annulée</strong> par Julien. N'hésitez pas à le contacter pour plus d'informations ou pour choisir une autre date.</p>
+      ${recap([
+        { label: "Prestation", value: esc(resa.prestation) },
+        { label: "Date", value: esc(resa.date) },
+      ])}`
+    ),
+  });
+}
+
+// 9. Suppression du compte → utilisateur
+export async function sendAccountDeleted({ to, prenom }: { to: string; prenom: string }) {
+  await send({
+    from: FROM(),
+    to,
+    subject: "Votre compte a été supprimé — Julien C DJ",
+    html: template(
+      "Compte supprimé",
+      `<p>Bonjour <strong style="color:#fff;">${esc(prenom)}</strong>,</p>
+      <p>Votre compte a bien été supprimé, ainsi que vos réservations et vos avis. Aucune donnée personnelle vous concernant n'est conservée sur le site.</p>
+      <p style="color:rgba(140,120,200,0.6);font-size:12px;margin-top:24px;">Si vous n'êtes pas à l'origine de cette suppression, répondez à cet email ou contactez Julien à julien.dj2a@gmail.com.</p>`
     ),
   });
 }

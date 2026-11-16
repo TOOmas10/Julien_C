@@ -4,7 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { revalidatePath } from "next/cache";
 import { prisma } from "./prisma";
-import { sendWelcome } from "./email";
+import { sendAccountDeleted, sendLater, sendWelcome } from "./email";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -25,10 +25,12 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          sendWelcome({
-            to: user.email,
-            prenom: (user as { prenom?: string }).prenom ?? user.name.split(" ")[0],
-          }).catch((err) => console.error("[auth] welcome email error:", err));
+          sendLater(() =>
+            sendWelcome({
+              to: user.email,
+              prenom: (user as { prenom?: string }).prenom ?? user.name.split(" ")[0],
+            })
+          );
         },
       },
     },
@@ -62,9 +64,16 @@ export const auth = betterAuth({
           },
         });
       },
-      afterDelete: async () => {
+      afterDelete: async (user) => {
         // Les avis de l'utilisateur disparaissent : on régénère la page publique.
         revalidatePath("/avis");
+        // Confirmation de suppression envoyée à l'ancien titulaire du compte
+        sendLater(() =>
+          sendAccountDeleted({
+            to: user.email,
+            prenom: (user as { prenom?: string | null }).prenom ?? user.name.split(" ")[0],
+          })
+        );
       },
     },
     additionalFields: {

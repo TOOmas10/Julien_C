@@ -5,9 +5,14 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
+  formatResaDate,
+  sendLater,
+  sendResaCancelledDJ,
   sendResaConfirmationUser,
+  sendResaDeletedUser,
   sendResaNotificationDJ,
   sendResaStatusUser,
+  sendResaUpdatedDJ,
   sendResaUpdatedUser,
 } from "@/lib/email";
 
@@ -19,6 +24,16 @@ type UserWithExtras = {
   nom?: string | null;
   tel?: string | null;
 };
+
+/** Coordonnées du client pour les emails envoyés à Julien. */
+function clientOf(u: UserWithExtras) {
+  return {
+    prenom: u.prenom ?? u.name.split(" ")[0] ?? "",
+    nom: u.nom ?? u.name.split(" ").slice(1).join(" "),
+    email: u.email,
+    tel: u.tel ?? null,
+  };
+}
 
 export async function createReservation(formData: FormData) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -41,33 +56,27 @@ export async function createReservation(formData: FormData) {
     },
   });
 
-  // Emails non-bloquants — n'affectent pas la réservation si ils échouent
+  // Emails envoyés après la réponse — n'affectent pas la réservation s'ils échouent
   const u = session.user as unknown as UserWithExtras;
-  const dateStr = date.toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  const dateStr = formatResaDate(date);
 
-  Promise.all([
-    sendResaConfirmationUser({
-      to: u.email,
-      prenom: u.prenom ?? u.name,
-      date: dateStr,
-      prestation: demande.prestation.type,
-      info: infoComplementaires || null,
-    }),
-    sendResaNotificationDJ({
-      prenom: u.prenom ?? "",
-      nom: u.nom ?? "",
-      email: u.email,
-      tel: u.tel ?? null,
-      date: dateStr,
-      prestation: demande.prestation.type,
-      info: infoComplementaires || null,
-    }),
-  ]).catch((err) => console.error("[reservations] email error:", err));
+  sendLater(() =>
+    Promise.all([
+      sendResaConfirmationUser({
+        to: u.email,
+        prenom: u.prenom ?? u.name,
+        date: dateStr,
+        prestation: demande.prestation.type,
+        info: infoComplementaires || null,
+      }),
+      sendResaNotificationDJ({
+        ...clientOf(u),
+        date: dateStr,
+        prestation: demande.prestation.type,
+        info: infoComplementaires || null,
+      }),
+    ])
+  );
 
   return { success: true };
 }
@@ -78,6 +87,7 @@ export async function updateReservation(id: number, formData: FormData) {
 
   const reservation = await prisma.reservation.findUnique({
     where: { demandeResaId: id },
+    include: { etat: true },
   });
   if (!reservation || reservation.userId !== session.user.id) redirect("/reservations");
 
@@ -98,28 +108,33 @@ export async function updateReservation(id: number, formData: FormData) {
 
   if (before) {
     const u = session.user as unknown as UserWithExtras;
-    const fmt = (d: Date) =>
-      d.toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      });
+    const beforeSnap = {
+      date: formatResaDate(before.date),
+      prestation: before.prestation.type,
+      info: before.infoComplementaires,
+    };
+    const afterSnap = {
+      date: formatResaDate(updated.date),
+      prestation: updated.prestation.type,
+      info: updated.infoComplementaires,
+    };
 
-    sendResaUpdatedUser({
-      to: u.email,
-      prenom: u.prenom ?? u.name,
-      before: {
-        date: fmt(before.date),
-        prestation: before.prestation.type,
-        info: before.infoComplementaires,
-      },
-      after: {
-        date: fmt(updated.date),
-        prestation: updated.prestation.type,
-        info: updated.infoComplementaires,
-      },
-    }).catch((err) => console.error("[reservations] email error:", err));
+    sendLater(() =>
+      Promise.all([
+        sendResaUpdatedUser({
+          to: u.email,
+          prenom: u.prenom ?? u.name,
+          before: beforeSnap,
+          after: afterSnap,
+        }),
+        sendResaUpdatedDJ({
+          client: clientOf(u),
+          before: beforeSnap,
+          after: afterSnap,
+          statut: reservation.etat.statut,
+        }),
+      ])
+    );
   }
 
   redirect("/reservations");
@@ -131,11 +146,25 @@ export async function deleteReservation(demandeResaId: number) {
 
   const reservation = await prisma.reservation.findUnique({
     where: { demandeResaId },
+    include: { demande: { include: { prestation: true } } },
   });
   if (!reservation || reservation.userId !== session.user.id) return;
 
   await prisma.reservation.delete({ where: { demandeResaId } });
   await prisma.demandeResa.delete({ where: { id: demandeResaId } });
+
+  // Prévient Julien que la date est libérée
+  const u = session.user as unknown as UserWithExtras;
+  sendLater(() =>
+    sendResaCancelledDJ({
+      client: clientOf(u),
+      resa: {
+        date: formatResaDate(reservation.demande.date),
+        prestation: reservation.demande.prestation.type,
+        info: reservation.demande.infoComplementaires,
+      },
+    })
+  );
 }
 
 export async function updateReservationEtat(demandeResaId: number, etatId: number) {
@@ -147,8 +176,8 @@ export async function updateReservationEtat(demandeResaId: number, etatId: numbe
     data: { etatId },
   });
 
-  // Uniquement pour Validée (1) et Refusée (2), pas En attente (3)
-  if (etatId !== 1 && etatId !== 2) return;
+  // Validée (1), Refusée (2) et retour En attente (3)
+  if (![1, 2, 3].includes(etatId)) return;
 
   const resa = await prisma.reservation.findUnique({
     where: { demandeResaId },
@@ -159,19 +188,17 @@ export async function updateReservationEtat(demandeResaId: number, etatId: numbe
     },
   });
 
-  if (resa) {
-    sendResaStatusUser({
-      to: resa.user.email,
-      prenom: (resa.user as unknown as UserWithExtras).prenom ?? resa.user.name,
-      statut: resa.etat.statut,
-      date: resa.demande.date.toLocaleDateString("fr-FR", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }),
-      prestation: resa.demande.prestation.type,
-    }).catch((err) => console.error("[reservations] email error:", err));
+  // Pas d'email pour les réservations de l'admin lui-même (soirées)
+  if (resa && resa.user.roleId !== 2) {
+    sendLater(() =>
+      sendResaStatusUser({
+        to: resa.user.email,
+        prenom: resa.user.prenom ?? resa.user.name,
+        statut: resa.etat.statut,
+        date: formatResaDate(resa.demande.date),
+        prestation: resa.demande.prestation.type,
+      })
+    );
   }
 }
 
@@ -179,6 +206,25 @@ export async function deleteReservationAdmin(demandeResaId: number) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session || session.user.roleId !== 2) redirect("/");
 
+  // Lu avant suppression pour pouvoir prévenir le client
+  const resa = await prisma.reservation.findUnique({
+    where: { demandeResaId },
+    include: { user: true, demande: { include: { prestation: true } } },
+  });
+
   await prisma.reservation.delete({ where: { demandeResaId } });
   await prisma.demandeResa.delete({ where: { id: demandeResaId } });
+
+  if (resa && resa.user.roleId !== 2) {
+    sendLater(() =>
+      sendResaDeletedUser({
+        to: resa.user.email,
+        prenom: resa.user.prenom ?? resa.user.name,
+        resa: {
+          date: formatResaDate(resa.demande.date),
+          prestation: resa.demande.prestation.type,
+        },
+      })
+    );
+  }
 }
